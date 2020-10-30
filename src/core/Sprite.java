@@ -32,5 +32,20 @@ public class Sprite {
 	public Point getPos() {
 		return this.pos;
 	}
+	
+	public void setPos(Point newPos) {
+		this.pos = newPos;
+	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if(!(other instanceof Sprite)) {
+			return false;
+		}
+		if(this.symbol == ((Sprite)other).getSymbol() && this.color == ((Sprite)other).getColor()) {
+			return true;
+		}
+		return false;
+	}
 
 }
