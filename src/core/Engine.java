@@ -18,6 +18,7 @@ public class Engine {
 		map = new Sprite[64][64][64];
 	}
 	
+	// sets a reference to a view, to update it when state changes
 	public void setView(View v) {
 		gameView = v;
 		updateView();
@@ -62,6 +63,7 @@ public class Engine {
 		updateView();
 	}
 	
+	// updates the View to reflect current state
 	private void updateView() {
 		gameView.update(map);
 	}
