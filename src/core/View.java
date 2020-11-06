@@ -16,14 +16,7 @@ public class View extends JPanel {
 	private Sprite[][][] world;
 
 	public View() {
-		// should initialize a test world here
-		world = new Sprite[64][64][64];
-		for (int r = 0; r < 64; r++) {
-			for (int c = 0; c < 64; c++) {
-				world[r][c][0] = new Sprite("#", Color.WHITE, new Point(c, r));
-			}
-		}
-		world[24][31][0] = new Sprite("@", Color.YELLOW, new Point(31, 24));
+
 	}
 
 	public void update(Sprite[][][] updatedWorld) {
