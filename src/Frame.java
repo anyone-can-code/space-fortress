@@ -4,12 +4,18 @@ import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
 import core.View;
+import core.Engine;
+
+import core.Sprite;
+import java.awt.Color;
+import java.awt.Point;
 
 public class Frame extends JFrame implements Runnable {
 
 	private Thread t;
 
 	private View gameView;
+	private Engine gameEngine;
 
 	public Frame() {
 
@@ -24,7 +30,10 @@ public class Frame extends JFrame implements Runnable {
 		gameView.setLayout(null);
 		gameView.setBounds(0, 0, getWidth(), getHeight());
 		add(gameView);
-
+		
+		gameEngine = new Engine();
+		gameEngine.setView(gameView);
+		
 		setVisible(true);
 
 		t = new Thread(this);
@@ -33,6 +42,7 @@ public class Frame extends JFrame implements Runnable {
 	}
 
 	public void run() {
+		int poop = 0;
 		
 		long beforeTime = System.currentTimeMillis();
 		while (true) {
@@ -42,7 +52,7 @@ public class Frame extends JFrame implements Runnable {
 			long sleep = 30 - timeDiff;
 
 			gameView.repaint();
-
+			
 			if (sleep < 2) {
 				sleep = 2;
 			}
