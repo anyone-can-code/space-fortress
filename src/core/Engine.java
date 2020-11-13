@@ -20,6 +20,7 @@ public class Engine {
 	// stuff for simulation
 	boolean running = true;
 	private ArrayList<Entity> world;
+	private ArrayList<Floor> floors;
 	
 	// stuff for View
 	private Sprite[][][] map;
@@ -29,6 +30,8 @@ public class Engine {
 	
 	// Default constructor
 	public Engine() {
+		world = new ArrayList<Entity>();
+		floors = new ArrayList<Floor>();
 		map = new Sprite[64][64][64];
 	}
 	
@@ -76,6 +79,32 @@ public class Engine {
 			}
 		}
 	}
+
+	// states whether or not a floor exists at the given location
+	public boolean floorExists(Point p) {
+		
+		for (Floor f : floors) {
+			if (f.getPos() == p) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	// adds a floor to the world
+	public void addFloor(Floor f) {
+		floors.add(f);
+	}
+	
+	// removes a floor from the world at a given position
+	public void removeFloor(Point p) {
+		for (Floor f : floors) {
+			if (f.getPos() == p) {
+				floors.remove(f);
+			}
+		}	
+	}
 			
 	//////////////////////////////////////////////////////////////////// public methods pertaining to the map
 	
@@ -93,6 +122,10 @@ public class Engine {
 	private void reassembleMap() {
 		for (Entity e : world) {
 			addToMap(e.getSprite(), e.getPos().x, e.getPos().y);
+		}
+		for (Floor f : floors) {
+			if (map[f.getPos().y][f.getPos().x][0] == null)
+				map[f.getPos().y][f.getPos().x][0] = f.getSprite();
 		}
 	}
 	

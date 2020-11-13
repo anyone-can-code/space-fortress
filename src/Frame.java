@@ -15,7 +15,6 @@ public class Frame extends JFrame implements Runnable {
 
 	public Frame() {
 
-
 		setTitle("S P A C E   F O R T R E S S");
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setSize(1400, 700);
