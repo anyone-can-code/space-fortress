@@ -1,6 +1,10 @@
+// Entity.java
+
 package core;
 
-class Entity {
+import java.awt.Point;
+
+public class Entity {
 	/*
 	 * Something that can move around the interact with stuff
 	 * Every tick it changes state according to a function
@@ -12,6 +16,7 @@ class Entity {
 	public Entity() {
 		this.name = "Null Entity";
 		this.sprite = null;
+
 	}
 	
 	public Entity(String name, Sprite sprite) {
@@ -26,6 +31,10 @@ class Entity {
 	
 	public Sprite getSprite() {
 		return sprite;
+	}
+	
+	public Point getPos() {
+		return sprite.getPos();
 	}
 	
 	// This method is to be overwritten by every child object of Entity

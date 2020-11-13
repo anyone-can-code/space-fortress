@@ -1,7 +1,12 @@
+// Engine.java
+
 package core;
+
 import java.awt.Point;
+import java.util.ArrayList;
 
 public class Engine {
+	
 	/*
 	 * Runs the gameloop
 	 * Holds world data
@@ -10,13 +15,69 @@ public class Engine {
 	 * Sends list of things coordinates and display information to view
 	 * Everything gets information from here
 	 */
+	 
 	
-	private Sprite[][][] map; // This holds everything in the world
+	// stuff for simulation
+	boolean running = true;
+	private ArrayList<Entity> world;
+	
+	// stuff for View
+	private Sprite[][][] map;
 	private View gameView;
 	
-	public Engine() { // Default constructor is likely the only one needed
+	//////////////////////////////////////////////////////////////////// instance variables above, methods below.
+	
+	// Default constructor
+	public Engine() {
 		map = new Sprite[64][64][64];
 	}
+	
+	// update the world as fast as possible
+	public void run() {
+		while (true) {
+			if (running) {
+				tick();
+			}
+		}
+	}
+	
+	// updates the world
+	public void tick() {
+		for (Entity e : world) {
+			e.tick();
+		}
+	}
+	
+	// returns an ArrayList of the entities at a given position
+	public ArrayList<Entity> getEntitiesAtPos(Point p) {
+		
+		ArrayList<Entity> relevantEntities = new ArrayList<Entity>();
+		for (Entity e : world) {
+			if (e.getPos() == p) {
+				relevantEntities.add(e);
+			}
+		}
+		
+		return relevantEntities;
+	}
+	
+	// adds an entity to the world
+	public void addToWorld(Entity toAdd) {
+		world.add(toAdd);
+	}
+	
+	// removes specified entity from the world
+	public void removeFromWorld(Entity toDie) {
+		
+		for (Entity e : world) {
+			if (toDie == e) {
+				world.remove(e);
+				break;
+			}
+		}
+	}
+			
+	//////////////////////////////////////////////////////////////////// public methods pertaining to the map
 	
 	// sets a reference to a view, to update it when state changes
 	public void setView(View v) {
@@ -25,10 +86,19 @@ public class Engine {
 	}
 	
 	public Sprite[][][] getMap() { // Returns the map; to be used by View primarily
+		reassembleMap();
 		return this.map;
 	}
 	
-	public void addToMap(Sprite obj, int x, int y) { // Adds Sprite obj to the map at point (x, y)
+	private void reassembleMap() {
+		for (Entity e : world) {
+			addToMap(e.getSprite(), e.getPos().x, e.getPos().y);
+		}
+	}
+	
+	//////////////////////////////////////////////////////////////////// private methods related to using the map for the view
+	
+	private void addToMap(Sprite obj, int x, int y) { // Adds Sprite obj to the map at point (x, y)
 		if(x < 0 || y < 0 || y >= map.length || x >= map[0].length) { // Runs if an object is being added outside of the map
 			throw new IllegalStateException("An object is being added outside of the map at point (" + x + ", " + y + ")");
 		}
@@ -48,7 +118,7 @@ public class Engine {
 		updateView();
 	}
 	
-	public void removeFromMap(Sprite obj, int x, int y) { // Removes Sprite obj from the map at point (x, y)
+	private void removeFromMap(Sprite obj, int x, int y) { // Removes Sprite obj from the map at point (x, y)
 		for(int i = 0; i < map[0][0].length; i++) {
 			if(map[0][0][i].equals(obj)) {
 				removePoint(x, y, i);

@@ -17,7 +17,6 @@ public class Sprite {
 
 		this.color = c;
 
-		this.pos = p;
 		
 	}
 
