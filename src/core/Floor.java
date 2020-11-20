@@ -12,6 +12,10 @@ public class Floor {
 		this.sprite = s;
 	}
 	
+	public Floor(Point p) {
+		this.sprite = new Sprite("#", Color.WHITE, p);
+	}
+	
 	public Sprite getSprite() {
 		return this.sprite;
 	}
