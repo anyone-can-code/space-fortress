@@ -25,27 +25,27 @@ public class Astronaut extends Entity {
 	}
 	
 	public void tick(Engine e) {
-		//~ Point newPos = new Point(getPos());
-		//~ System.out.println(newPos);
-		//~ switch (rand.nextInt(4)) {
-			//~ case 0:
-				//~ newPos.x += 1;
-				//~ break;
+		Point newPos = new Point(getPos());
+		switch (rand.nextInt(4)) {
+			case 0:
+				newPos.x += 1;
+				break;
 				
-			//~ case 1:
-				//~ newPos.y += 1;
-				//~ break;
+			case 1:
+				newPos.y += 1;
+				break;
 				
-			//~ case 2:
-				//~ newPos.x -= 1;
-				//~ break;
+			case 2:
+				newPos.x -= 1;
+				break;
 				
-			//~ case 3:
-				//~ newPos.y -= 1;
-				//~ break;
-		//~ }
-		//~ if (e.floorExists(newPos))
-			//~ this.getSprite().setPos(newPos);
+			case 3:
+				newPos.y -= 1;
+				break;
+		}
+		if (e.floorExists(newPos)) {
+			this.getSprite().setPos(newPos);
+		}
 	}
 	
 }

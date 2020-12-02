@@ -77,7 +77,7 @@ public class Engine {
 	public boolean floorExists(Point p) {
 		
 		for (Floor f : floors) {
-			if (f.getPos() == p) {
+			if (f.getPos().equals(p)) {
 				return true;
 			}
 		}
@@ -124,6 +124,7 @@ public class Engine {
 	}
 	
 	private void reassembleMap() {
+		map = new Sprite[64][64][64];
 		for (Entity e : world) {
 			addToMap(e.getSprite(), e.getPos().x, e.getPos().y);
 		}
