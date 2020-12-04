@@ -2,6 +2,7 @@
 
 package core;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
 
@@ -33,21 +34,13 @@ public class Engine {
 		world = new ArrayList<Entity>();
 		floors = new ArrayList<Floor>();
 		map = new Sprite[64][64][64];
-	}
-	
-	// update the world as fast as possible
-	public void run() {
-		while (true) {
-			if (running) {
-				tick();
-			}
-		}
+		
 	}
 	
 	// updates the world
 	public void tick() {
 		for (Entity e : world) {
-			e.tick();
+			e.tick(this);
 		}
 	}
 	
@@ -65,7 +58,7 @@ public class Engine {
 	}
 	
 	// adds an entity to the world
-	public void addToWorld(Entity toAdd) {
+	public void addEntity(Entity toAdd) {
 		world.add(toAdd);
 	}
 	
@@ -84,7 +77,7 @@ public class Engine {
 	public boolean floorExists(Point p) {
 		
 		for (Floor f : floors) {
-			if (f.getPos() == p) {
+			if (f.getPos().equals(p)) {
 				return true;
 			}
 		}
@@ -97,6 +90,16 @@ public class Engine {
 		floors.add(f);
 	}
 	
+	// adds a rectangle, from with given x, y, width, height, to world
+	public void addFloorRect(int x, int y, int width, int height) {
+		for (int yPos = y; yPos < (y + height - 1); yPos++) {
+			for (int xPos = x; xPos < (x + width - 1); xPos++) {
+				Floor flo = new Floor(new Point(xPos, yPos));
+				addFloor(flo);
+			}
+		}
+	}
+	
 	// removes a floor from the world at a given position
 	public void removeFloor(Point p) {
 		for (Floor f : floors) {
@@ -105,6 +108,7 @@ public class Engine {
 			}
 		}	
 	}
+	
 			
 	//////////////////////////////////////////////////////////////////// public methods pertaining to the map
 	
@@ -120,6 +124,7 @@ public class Engine {
 	}
 	
 	private void reassembleMap() {
+		map = new Sprite[64][64][64];
 		for (Entity e : world) {
 			addToMap(e.getSprite(), e.getPos().x, e.getPos().y);
 		}

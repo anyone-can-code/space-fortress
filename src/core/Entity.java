@@ -38,5 +38,5 @@ public class Entity {
 	}
 	
 	// This method is to be overwritten by every child object of Entity
-	public void tick() {}
+	public void tick(Engine e) {}
 }
