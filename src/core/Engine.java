@@ -43,6 +43,10 @@ public class Engine {
 			e.tick(this);
 		}
 	}
+
+	public ArrayList<Entity> getWorld() {
+		return world;
+	}
 	
 	// returns an ArrayList of the entities at a given position
 	public ArrayList<Entity> getEntitiesAtPos(Point p) {
