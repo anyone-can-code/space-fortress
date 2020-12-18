@@ -9,6 +9,7 @@ import core.View;
 import core.Engine;
 
 import game.Astronaut;
+import game.furnature.Chair;
 
 public class Frame extends JFrame implements Runnable {
 
@@ -36,6 +37,7 @@ public class Frame extends JFrame implements Runnable {
 		// TEMPORARY MANUAL GAME WORLD SETUP
 		gameEngine.addFloorRect(16, 16, 48, 32);
 		gameEngine.addEntity(new Astronaut(new Point(32, 32)));
+		gameEngine.addEntity(new Chair(new Point((int)(Math.random()*(48-16)+16), (int)(Math.random()*(32-16)+16))));
 		
 		setVisible(true);
 
