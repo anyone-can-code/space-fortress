@@ -21,6 +21,10 @@ public class Sprite {
 		
 	}
 
+	public void setColor(Color c) {
+		this.color = c;
+	}
+
 	public Color getColor() {
 		return this.color;
 	}
