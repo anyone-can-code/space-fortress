@@ -6,10 +6,10 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Debug (Launch)-Main<space-fortress_33c91b2c>",
+            "name": "Debug (Launch)",
             "request": "launch",
-            "mainClass": "Main",
-            "projectName": "space-fortress_33c91b2c"
+            "mainClass": "Main"
         }
+        
     ]
 }
