@@ -1,4 +1,4 @@
-package game;
+package game.food;
 
 import core.Entity;
 import core.Sprite;
