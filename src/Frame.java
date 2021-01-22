@@ -37,7 +37,7 @@ public class Frame extends JFrame implements Runnable {
 		
 		// TEMPORARY MANUAL GAME WORLD SETUP
 		gameEngine.addFloorRect(16, 16, 48, 32);
-		gameEngine.addEntity(new Astronaut(new Point(32, 32)));
+		gameEngine.addEntity(new Astronaut(new Point(60, 32)));
 		gameEngine.addEntity(new Chair(new Point((int)(Math.random()*(48-16)+16), (int)(Math.random()*(32-16)+16))));
 		gameEngine.addEntity(new AstronautIceCream(new Point(20, 30)));
 		

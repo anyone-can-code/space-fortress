@@ -39,7 +39,8 @@ public class Engine {
 	
 	// updates the world
 	public void tick() {
-		for (Entity e : world) {
+		ArrayList<Entity> tempWorld = new ArrayList<Entity>(world);
+		for (Entity e : tempWorld) {
 			e.tick(this);
 		}
 	}

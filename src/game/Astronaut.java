@@ -5,11 +5,11 @@ package game;
 import core.Engine;
 import core.Entity;
 import core.Sprite;
+import game.food.Food;
 import game.furnature.Chair;
 
 import java.awt.Color;
 import java.awt.Point;
-import java.lang.reflect.Array;
 import java.util.Random;
 import java.util.ArrayList;
 
@@ -27,6 +27,7 @@ public class Astronaut extends Entity {
 	private int fatigue;
 	private int fatigueThreshold;
 	private boolean sitting;
+	private ArrayList<Entity> inventory;
 	
 	public Astronaut(Point p) {
 		super("Astronaut Abe", new Sprite("@", Color.WHITE, p));
@@ -35,6 +36,7 @@ public class Astronaut extends Entity {
 		fatigue = 0;
 		fatigueThreshold = 250;
 		sitting = false;
+		inventory = new ArrayList<Entity>();
 	}
 	
 	public Astronaut() {
@@ -63,11 +65,40 @@ public class Astronaut extends Entity {
 		}
 		else { // If they are not sitting
 			if (fatigue <= fatigueThreshold) { // If they are not tired
-				randomlyWalk(e);
+				boolean didAction = false;
+				// eat food if it is held and removes fatigue
+				if (!didAction) {
+					var tempInventory = new ArrayList<Entity>(inventory);
+					for (Entity et : tempInventory) {
+						if (et instanceof Food) {
+							Food f = (Food) et;
+							if (fatigue > f.getNutrition()) {
+								fatigue = Math.max(0, fatigue - f.getNutrition());
+								inventory.remove(et);
+								didAction = true;
+							}
+						}
+					}
+				}
+				// go to food if it's nearby
+				if (!didAction) {
+					Entity desiredFood = find(e, "Astronaut Ice Cream", 10);
+					if (desiredFood != null) {
+						goTo(e, desiredFood);
+						if (desiredFood.getPos().distance(this.getPos()) == 0) {
+							this.inventory.add(desiredFood);
+							e.removeFromWorld(desiredFood);
+							didAction = true;
+						}
+						didAction = true;
+					}
+				}
+				// walk randomly if everything else's been done
+				if (!didAction) this.randomlyWalk(e);
 			}
 			else { // If they are tired
 				// Go find a chair and sit in it
-				Entity desiredChair = find(e, "Chair", 10);
+				Entity desiredChair = find(e, "Chair", 20);
 				if(desiredChair != null && desiredChair.getPos().distance(this.getPos()) == 0) { // Runs if already at the chair
 					sitting = true;
 				}
