@@ -3,6 +3,17 @@ package core;
 
 import java.util.ArrayList;
 
+/*
+Process of using an ActionQueue:
+1. Give an Entity an ActionQueue
+2. Define Actions as private classes in an Entity
+    1. Actions have access to everything in the Entity, so they can manipulate the Entity as if they are the Entity
+    2. The actional action takes place in the perform function of Action, which should be overridden when defining
+    3. Actions should return False if they're still in-progress, or True if their complete
+3. In the Entity's tick(), add any neccesary-for-survival or player-requested actions to the ActionQueue
+4. Call ActionQueue.tick() at the end of the Entity's tick()
+*/
+
 public class ActionQueue {
 
     private ArrayList<Action> actionsToDo;
@@ -16,7 +27,7 @@ public class ActionQueue {
 
     public void tick(Engine eng) {
         if (currentAction == null) {
-            if (actionsToDo.get(0) == null) {
+            if (actionsToDo.size() == 0) {
                 add(defaultAction);
             }
             currentAction = actionsToDo.remove(0);

@@ -1,12 +1,17 @@
 // Astronaut.java
 
+// TO-DO: USE NEW ACTIONS AND ACTIONQUEUE IN ASTRONAUT'S TICK
+
 package game;
 
 import core.Engine;
 import core.Entity;
+import core.Action;
+import core.ActionQueue;
 import core.Sprite;
+
 import game.food.Food;
-import game.furnature.Chair;
+import game.furniture.Chair;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -16,171 +21,92 @@ import java.util.ArrayList;
 public class Astronaut extends Entity {
 
 	/*
-	/// Developer note
-	Lines 55 and 157-159 are currently throwing null pointer exceptions, likely because the chair and currentChair objects are not being properly initialized.
-	This inhibits the functionality of chairs having an "occupied" mode, so it has been commented out for now. However, it needs to repaired somewhat soon, or else multiple astronauts will use the same chair simultaneously.
-	I am currently working on the issue, but suggestions are appreciated. However, this isn't *that* big of an issue, so it can just sort of stay in the background for now while more pressing things are addressed.
-	- Jack
+	 * /// Developer note Lines 55 and 157-159 are currently throwing null pointer
+	 * exceptions, likely because the chair and currentChair objects are not being
+	 * properly initialized. This inhibits the functionality of chairs having an
+	 * "occupied" mode, so it has been commented out for now. However, it needs to
+	 * repaired somewhat soon, or else multiple astronauts will use the same chair
+	 * simultaneously. I am currently working on the issue, but suggestions are
+	 * appreciated. However, this isn't *that* big of an issue, so it can just sort
+	 * of stay in the background for now while more pressing things are addressed. -
+	 * Jack
 	 */
-	
+
 	private Random rand;
 	private int fatigue;
 	private int fatigueThreshold;
-	private boolean sitting;
+	private ActionQueue actionQueue;
 	private ArrayList<Entity> inventory;
-	
+
 	public Astronaut(Point p) {
 		super("Astronaut Abe", new Sprite("@", Color.WHITE, p));
 
 		rand = new Random();
 		fatigue = 0;
 		fatigueThreshold = 250;
-		sitting = false;
 		inventory = new ArrayList<Entity>();
+		actionQueue = new ActionQueue();
+		actionQueue.setDefaultAction(new RandomlyWalk());
 	}
-	
+
 	public Astronaut() {
 		this(new Point(0, 0));
 	}
-	
+
 	public void tick(Engine e) {
 		// This version of the Tick function is being used purely for testing purposes
+		// NOTE! default action is RandomlyWalk
 
-		if(sitting) { // If the player is sitting
-			// Next bit of code find the chair they are sitting in
-			Entity currentChair = null;
-			for(Entity entity : e.getEntitiesAtPos(this.getPos())) {
-				if(entity.getName().equals("Chair")) {
-					currentChair = entity;
-					break;
-				}
-			}
-			if(fatigue <= 5) { // If they are ready to get up
-				sitting = false; // Stand up
-				//currentChair.setInUse(false);
-			}
-			else { // If they are to keep sitting
-				sit(currentChair);
-			}
-		}
-		else { // If they are not sitting
-			if (fatigue <= fatigueThreshold) { // If they are not tired
-				boolean didAction = false;
-				// eat food if it is held and removes fatigue
-				if (!didAction) {
-					var tempInventory = new ArrayList<Entity>(inventory);
-					for (Entity et : tempInventory) {
-						if (et instanceof Food) {
-							Food f = (Food) et;
-							if (fatigue > f.getNutrition()) {
-								fatigue = Math.max(0, fatigue - f.getNutrition());
-								inventory.remove(et);
-								didAction = true;
-							}
-						}
-					}
-				}
-				// go to food if it's nearby
-				if (!didAction) {
-					Entity desiredFood = find(e, "Astronaut Ice Cream", 10);
-					if (desiredFood != null) {
-						goTo(e, desiredFood);
-						if (desiredFood.getPos().distance(this.getPos()) == 0) {
-							this.inventory.add(desiredFood);
-							e.removeFromWorld(desiredFood);
-							didAction = true;
-						}
-						didAction = true;
-					}
-				}
-				// walk randomly if everything else's been done
-				if (!didAction) this.randomlyWalk(e);
-			}
-			else { // If they are tired
-				// Go find a chair and sit in it
-				Entity desiredChair = find(e, "Chair", 20);
-				if(desiredChair != null && desiredChair.getPos().distance(this.getPos()) == 0) { // Runs if already at the chair
-					sitting = true;
-				}
-				else {
-					goTo(e, desiredChair); // Moves the Astronaut towards the chair
-				}
-			}
-		}
+		if (fatigue >= fatigueThreshold)
+			actionQueue.addToFront(new Rest());
+
+		actionQueue.tick(e);
 	}
 
-	private Entity find(Engine e, String entityName, float thresholdDistance) { // This returns an Entity within the required radius of thresholdDistance of the desired type
+	private Entity find(Engine e, String entityName, float thresholdDistance) { // This returns an Entity within the
+																				// required radius of thresholdDistance
+																				// of the desired type
 		ArrayList<Entity> world = e.getWorld();
-		for(Entity entity : world) {
-			if(entity.getName().equals(entityName) && !entity.getInUse() && entity.getPos().distance(this.getPos()) <= thresholdDistance) {
+		for (Entity entity : world) {
+			if (entity.getName().equals(entityName) && !entity.getInUse()
+					&& entity.getPos().distance(this.getPos()) <= thresholdDistance) {
 				return entity;
 			}
 		}
 		return null;
 	}
 
-
-	/*
-	The following methods are "desire methods". They are the actions the Astronaut can take, depending on what they want to do.
-	In this sense, the tick() method essentially uses a series of decision trees to determine which of these methods to run.
-	 */
-
-	private void randomlyWalk(Engine e) {
-		Point newPos = new Point(getPos());
-		switch (rand.nextInt(4)) {
-			case 0:
-				newPos.x += 1;
-				break;
-
-			case 1:
-				newPos.y += 1;
-				break;
-
-			case 2:
-				newPos.x -= 1;
-				break;
-
-			case 3:
-				newPos.y -= 1;
-				break;
-		}
-		if (e.floorExists(newPos)) {
-			this.getSprite().setPos(newPos);
-		}
-		fatigue++;
-	}
-
 	private void goTo(Engine e, Entity other) {
 		Point newPos = new Point(getPos());
-		if(other == null)
+		if (other == null)
 			return;
-		if(this.getPos().x > other.getPos().x) {
+		if (this.getPos().x > other.getPos().x) {
 			newPos.x -= 1;
-			if(e.floorExists(newPos)) {
+			if (e.floorExists(newPos)) {
 				this.getSprite().setPos(newPos);
 				return;
 			}
 			newPos.x = this.getPos().x;
 		}
-		if(this.getPos().x < other.getPos().x) {
+		if (this.getPos().x < other.getPos().x) {
 			newPos.x += 1;
-			if(e.floorExists(newPos)) {
+			if (e.floorExists(newPos)) {
 				this.getSprite().setPos(newPos);
 				return;
 			}
 			newPos.x = this.getPos().x;
 		}
-		if(this.getPos().y > other.getPos().y) {
+		if (this.getPos().y > other.getPos().y) {
 			newPos.y -= 1;
-			if(e.floorExists(newPos)) {
+			if (e.floorExists(newPos)) {
 				this.getSprite().setPos(newPos);
 				return;
 			}
 			newPos.y = this.getPos().y;
 		}
-		if(this.getPos().y < other.getPos().y) {
+		if (this.getPos().y < other.getPos().y) {
 			newPos.y += 1;
-			if(e.floorExists(newPos)) {
+			if (e.floorExists(newPos)) {
 				this.getSprite().setPos(newPos);
 				return;
 			}
@@ -188,13 +114,71 @@ public class Astronaut extends Entity {
 		}
 	}
 
-	public void sit(Entity chair) {
-		/*
-		if(!chair.getInUse()) {
-			chair.setInUse(true);
+	////////////////////////////////////////////////////// ACTION CLASSES
+	// These are actions that the Astronaut can take, to be used with the ActionQueue
+	// It's worth noting that these classes can access Astronaut's private variables
+
+	// walk randomly
+	private class RandomlyWalk implements Action {
+
+		@Override
+		public boolean perform(Engine eng) {
+
+			Point newPos = new Point(getPos());
+			switch (rand.nextInt(4)) {
+				case 0:
+					newPos.x += 1;
+					break;
+
+				case 1:
+					newPos.y += 1;
+					break;
+
+				case 2:
+					newPos.x -= 1;
+					break;
+
+				case 3:
+					newPos.y -= 1;
+					break;
+			}
+
+			if (eng.floorExists(newPos)) {
+				getSprite().setPos(newPos);
+			}
+
+			fatigue += 1;
+
+			return true;
 		}
-		*/
-		fatigue--;
 	}
-	
+
+	// find a chair and sit in it
+	private class Rest implements Action {
+
+		@Override
+		public boolean perform(Engine eng) {
+			Chair desiredChair = (Chair) find(eng, "Chair", fatigue);
+
+			if (fatigue < fatigueThreshold)
+				return true;
+
+			if (desiredChair != null &&  !desiredChair.isOccupied() &&
+				desiredChair.getPos().distance(getPos()) == 0) { // Runs if already at the chair
+
+				fatigue -= 5;
+
+			} else if (desiredChair != null) {
+				goTo(eng, desiredChair); // Moves the Astronaut towards the chair
+			} else {
+				fatigue -= 1;
+			}
+
+			return false;
+
+		}
+
+	}
+
+
 }
