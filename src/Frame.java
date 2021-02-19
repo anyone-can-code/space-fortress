@@ -9,8 +9,8 @@ import core.View;
 import core.Engine;
 
 import game.Astronaut;
-import game.furnature.Chair;
 import game.food.AstronautIceCream;
+import game.furniture.Chair;
 
 public class Frame extends JFrame implements Runnable {
 
