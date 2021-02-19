@@ -108,7 +108,7 @@ public class Astronaut extends Entity {
 
 		@Override
 		public boolean perform(Engine eng) {
-			Chair desiredChair = (Chair) find(eng, "Chair", fatigue);
+			Chair desiredChair = (Chair) find(eng, Chair.class, fatigue);
 
 			if (fatigue < fatigueThreshold)
 				return true;
