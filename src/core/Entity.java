@@ -3,6 +3,7 @@
 package core;
 
 import java.awt.Point;
+import java.util.ArrayList;
 
 public class Entity {
 	/*
@@ -50,4 +51,56 @@ public class Entity {
 	
 	// This method is to be overwritten by every child object of Entity
 	public void tick(Engine e) {}
+
+
+	protected Entity find(Engine e, String entityName, float thresholdDistance) { // This returns an Entity within the
+																				// required radius of thresholdDistance
+																				// of the desired type
+		ArrayList<Entity> world = e.getWorld();
+		for (Entity entity : world) {
+			if (entity.getName().equals(entityName) && !entity.getInUse()
+					&& entity.getPos().distance(this.getPos()) <= thresholdDistance) {
+				return entity;
+			}
+		}
+		return null;
+	}
+
+	protected void goTo(Engine e, Entity other) {
+		Point newPos = new Point(getPos());
+		if (other == null)
+			return;
+		if (this.getPos().x > other.getPos().x) {
+			newPos.x -= 1;
+			if (e.floorExists(newPos)) {
+				this.getSprite().setPos(newPos);
+				return;
+			}
+			newPos.x = this.getPos().x;
+		}
+		if (this.getPos().x < other.getPos().x) {
+			newPos.x += 1;
+			if (e.floorExists(newPos)) {
+				this.getSprite().setPos(newPos);
+				return;
+			}
+			newPos.x = this.getPos().x;
+		}
+		if (this.getPos().y > other.getPos().y) {
+			newPos.y -= 1;
+			if (e.floorExists(newPos)) {
+				this.getSprite().setPos(newPos);
+				return;
+			}
+			newPos.y = this.getPos().y;
+		}
+		if (this.getPos().y < other.getPos().y) {
+			newPos.y += 1;
+			if (e.floorExists(newPos)) {
+				this.getSprite().setPos(newPos);
+				return;
+			}
+			newPos.y = this.getPos().y;
+		}
+	}
 }

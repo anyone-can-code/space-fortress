@@ -63,56 +63,6 @@ public class Astronaut extends Entity {
 		actionQueue.tick(e);
 	}
 
-	private Entity find(Engine e, String entityName, float thresholdDistance) { // This returns an Entity within the
-																				// required radius of thresholdDistance
-																				// of the desired type
-		ArrayList<Entity> world = e.getWorld();
-		for (Entity entity : world) {
-			if (entity.getName().equals(entityName) && !entity.getInUse()
-					&& entity.getPos().distance(this.getPos()) <= thresholdDistance) {
-				return entity;
-			}
-		}
-		return null;
-	}
-
-	private void goTo(Engine e, Entity other) {
-		Point newPos = new Point(getPos());
-		if (other == null)
-			return;
-		if (this.getPos().x > other.getPos().x) {
-			newPos.x -= 1;
-			if (e.floorExists(newPos)) {
-				this.getSprite().setPos(newPos);
-				return;
-			}
-			newPos.x = this.getPos().x;
-		}
-		if (this.getPos().x < other.getPos().x) {
-			newPos.x += 1;
-			if (e.floorExists(newPos)) {
-				this.getSprite().setPos(newPos);
-				return;
-			}
-			newPos.x = this.getPos().x;
-		}
-		if (this.getPos().y > other.getPos().y) {
-			newPos.y -= 1;
-			if (e.floorExists(newPos)) {
-				this.getSprite().setPos(newPos);
-				return;
-			}
-			newPos.y = this.getPos().y;
-		}
-		if (this.getPos().y < other.getPos().y) {
-			newPos.y += 1;
-			if (e.floorExists(newPos)) {
-				this.getSprite().setPos(newPos);
-				return;
-			}
-			newPos.y = this.getPos().y;
-		}
-	}
 
 	////////////////////////////////////////////////////// ACTION CLASSES
 	// These are actions that the Astronaut can take, to be used with the ActionQueue
